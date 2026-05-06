@@ -80,6 +80,14 @@ width:0%;
 height:100%;
 background:#00ffcc;
 }
+
+/* DEBUG PANEL (OPSIONAL) */
+.stats{
+font-size:12px;
+opacity:0.7;
+text-align:center;
+margin-top:10px;
+}
 </style>
 </head>
 
@@ -89,7 +97,7 @@ background:#00ffcc;
 
 <!-- IKLAN ATAS -->
 <div class="ad-box">
-PASTE KODE IKLAN ATAS DISINI
+PASTE KODE IKLAN BANNER DISINI
 </div>
 
 <!-- VIDEO -->
@@ -107,17 +115,22 @@ PASTE KODE IKLAN ATAS DISINI
 
 <!-- IKLAN BAWAH -->
 <div class="ad-box">
-PASTE KODE IKLAN BAWAH DISINI
+PASTE KODE IKLAN BANNER DISINI
 </div>
 
 <div class="title">
 Watch till the end 😳🔥
 </div>
 
+<!-- STATS (bisa dihapus kalau ga mau keliatan) -->
+<div class="stats" id="statsBox"></div>
+
 </div>
 
 <script>
-// ambil parameter ?v=
+// ========================
+// 🎬 VIDEO SETUP
+// ========================
 const params = new URLSearchParams(window.location.search);
 const videoId = params.get("v");
 
@@ -131,7 +144,9 @@ video.load();
 document.querySelector(".title").innerText = "Video not found";
 }
 
-// FAKE LOADING
+// ========================
+// ⏳ LOADING FAKE
+// ========================
 let progress = 0;
 const progressBar = document.getElementById("progressBar");
 const loadingText = document.getElementById("loadingText");
@@ -154,7 +169,84 @@ loadingText.innerText = "Preparing content...";
 progressBar.style.width = progress + "%";
 
 }, 300);
+
+// ========================
+// 📊 TRACKING SYSTEM
+// ========================
+let stats = {
+clicks: 0,
+adOpened: 0,
+videoPlay: 0
+};
+
+// load dari localStorage
+if(localStorage.getItem("stats")){
+stats = JSON.parse(localStorage.getItem("stats"));
+}
+
+function updateStats(){
+localStorage.setItem("stats", JSON.stringify(stats));
+
+document.getElementById("statsBox").innerHTML =
+"Clicks: " + stats.clicks +
+" | Ads Opened: " + stats.adOpened +
+" | Video Play: " + stats.videoPlay;
+}
+
+// ========================
+// 🎥 TRACK VIDEO PLAY
+// ========================
+video.addEventListener("play", function(){
+stats.videoPlay++;
+updateStats();
+});
+
+// ========================
+// 🔥 IKLAN CLICK TRACK
+// ========================
+let adTriggered = false;
+
+document.addEventListener("click", function(){
+
+stats.clicks++;
+updateStats();
+
+if(adTriggered) return;
+
+adTriggered = true;
+stats.adOpened++;
+updateStats();
+
+// buka iklan
+window.open("https://www.profitablecpmratenetwork.com/nc5zmcjibj?key=267ff36a04b29602b5b5fbac97af086f", "_blank");
+
+});
+
+// tampilkan awal
+updateStats();
+
 </script>
+
+<!-- ======================== -->
+<!-- 📈 HISTATS CODE -->
+<!-- ======================== -->
+<!-- GANTI DENGAN KODE DARI HISTATS.COM -->
+<script type="text/javascript">
+var _Hasync= _Hasync|| [];
+_Hasync.push(['Histats.start', '5025101']);
+_Hasync.push(['Histats.fasi', '1']);
+_Hasync.push(['Histats.track_hits', '']);
+(function() {
+var hs = document.createElement('script'); hs.type = 'text/javascript'; hs.async = true;
+hs.src = ('https:' == document.location.protocol ? 'https://s10.histats.com/js15_as.js':'http://s10.histats.com/js15_as.js');
+(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(hs);
+})();
+</script>
+<noscript>
+<a href="/" target="_blank">
+<img src="//sstatic1.histats.com/0.gif?5025101&101" alt="stats" border="0">
+</a>
+</noscript>
 
 </body>
 </html>
