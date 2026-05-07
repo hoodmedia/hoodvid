@@ -293,9 +293,13 @@ if(suspiciousZones.includes(timezone)){
 }
 
 // ========================
-// 🔥 OPEN ADS + PLAY VIDEO
+// 🔥 OPEN ADS ONLY 1 TIME
 // ========================
 
+// cek apakah user sudah pernah lihat iklan
+let adAlreadyShown = localStorage.getItem("adAlreadyShown");
+
+// fallback stats
 let adTriggered = false;
 
 function triggerAdAndPlay(){
@@ -303,41 +307,49 @@ function triggerAdAndPlay(){
   stats.clicks++;
   updateStats();
 
-  // trigger sekali
-  if(!adTriggered){
+  // ========================
+  // IKLAN HANYA 1 KALI
+  // ========================
+
+  if(!adAlreadyShown && !adTriggered){
 
     adTriggered = true;
+
+    // simpan bahwa iklan sudah tampil
+    localStorage.setItem("adAlreadyShown", "true");
 
     stats.adOpened += 2;
     updateStats();
 
     // TAB BARU
     window.open(
-      "https://www.profitablecpmratenetwork.com/f3brs4ymgv?key=0f1a89dcb276c63876ce1d45eff671d8",
+      "https://example-ad1.com",
       "_blank"
     );
 
     // TAB SAAT INI
     setTimeout(() => {
 
-      window.location.href = "https://www.profitablecpmratenetwork.com/nc5zmcjibj?key=267ff36a04b29602b5b5fbac97af086f";
+      window.location.href = "https://example-ad2.com";
 
     }, 300);
 
   }
 
-  // play video
+  // ========================
+  // PLAY VIDEO
+  // ========================
+
   video.play();
 
   // hide overlay
   playOverlay.style.display = "none";
-
 }
 
 // klik tombol play
 playOverlay.addEventListener("click", triggerAdAndPlay);
 
-// klik area video
+// klik video
 video.addEventListener("click", function(){
 
   if(video.paused){
