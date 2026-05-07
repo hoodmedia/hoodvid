@@ -1,92 +1,95 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Videy</title>
 
 <style>
 *{
-box-sizing:border-box;
-margin:0;
-padding:0;
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
 }
 
 body{
-font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
-background:#000;
-display:flex;
-justify-content:center;
-align-items:center;
-min-height:100vh;
-color:#fff;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+  background:#000;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  min-height:100vh;
+  color:#fff;
 }
 
 .container{
-width:100%;
-max-width:420px;
-position:relative;
+  width:100%;
+  max-width:420px;
+  position:relative;
+  padding:10px;
 }
 
-.ad-box{
-width:100%;
-margin:12px 0;
-text-align:center;
+.video-wrapper{
+  position:relative;
+  width:100%;
+  border-radius:12px;
+  overflow:hidden;
+  background:#000;
 }
 
 video{
-width:100%;
-border-radius:12px;
-background:#000;
-display:none;
+  width:100%;
+  display:block;
+  background:#000;
+}
+
+/* PLAY BUTTON */
+.play-overlay{
+  position:absolute;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  background:rgba(0,0,0,0.35);
+  cursor:pointer;
+  z-index:10;
+}
+
+.play-button{
+  width:90px;
+  height:90px;
+  border-radius:50%;
+  background:rgba(255,255,255,0.15);
+  backdrop-filter:blur(5px);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  border:2px solid rgba(255,255,255,0.25);
+}
+
+.play-button:before{
+  content:'';
+  border-style:solid;
+  border-width:18px 0 18px 28px;
+  border-color:transparent transparent transparent #fff;
+  margin-left:6px;
 }
 
 .title{
-font-size:16px;
-margin:12px 0;
-text-align:center;
+  font-size:16px;
+  margin-top:14px;
+  text-align:center;
 }
 
-.loading-box{
-position:absolute;
-top:0;
-left:0;
-width:100%;
-height:100%;
-background:#000;
-display:flex;
-flex-direction:column;
-justify-content:center;
-align-items:center;
-border-radius:12px;
-z-index:20;
-}
-
-.loading-text{
-margin-bottom:12px;
-font-size:14px;
-}
-
-.progress-bar{
-width:70%;
-height:6px;
-background:#333;
-border-radius:10px;
-overflow:hidden;
-}
-
-.progress{
-width:0%;
-height:100%;
-background:#00ffcc;
-}
-
-/* DEBUG PANEL (OPSIONAL) */
+/* OPTIONAL STATS */
 .stats{
-font-size:12px;
-opacity:0.7;
-text-align:center;
-margin-top:10px;
+  font-size:12px;
+  opacity:0.7;
+  text-align:center;
+  margin-top:10px;
 }
 </style>
 </head>
@@ -95,54 +98,25 @@ margin-top:10px;
 
 <div class="container">
 
-<!-- IKLAN ATAS -->
-<div class="ad-box">
-<script>
-  atOptions = {
-    'key' : '25e756b410549406cb78cc33b15c7add',
-    'format' : 'iframe',
-    'height' : 50,
-    'width' : 320,
-    'params' : {}
-  };
-</script>
-<script src="https://www.highperformanceformat.com/25e756b410549406cb78cc33b15c7add/invoke.js"></script>
+<div class="video-wrapper" id="videoWrapper">
 
-</div>
+  <!-- VIDEO -->
+  <video id="videoPlayer" controls playsinline>
+    <source id="videoSource" src="" type="video/mp4">
+  </video>
 
-<!-- VIDEO -->
-<video id="videoPlayer" controls autoplay muted playsinline>
-<source id="videoSource" src="" type="video/mp4">
-</video>
-
-<!-- LOADING -->
-<div class="loading-box" id="loadingBox">
-<div class="loading-text" id="loadingText">Loading video...</div>
-<div class="progress-bar">
-<div class="progress" id="progressBar"></div>
-</div>
-</div>
-
-<!-- IKLAN BAWAH -->
-<div class="ad-box">
-<script>
-  atOptions = {
-    'key' : '25e756b410549406cb78cc33b15c7add',
-    'format' : 'iframe',
-    'height' : 50,
-    'width' : 320,
-    'params' : {}
-  };
-</script>
-<script src="https://www.highperformanceformat.com/25e756b410549406cb78cc33b15c7add/invoke.js"></script>
+  <!-- PLAY OVERLAY -->
+  <div class="play-overlay" id="playOverlay">
+    <div class="play-button"></div>
+  </div>
 
 </div>
 
 <div class="title">
-Watch till the end 😳🔥
+  Watch till the end 😳🔥
 </div>
 
-<!-- STATS (bisa dihapus kalau ga mau keliatan) -->
+<!-- OPTIONAL STATS -->
 <div class="stats" id="statsBox"></div>
 
 </div>
@@ -156,89 +130,90 @@ const videoId = params.get("v");
 
 const video = document.getElementById("videoPlayer");
 const source = document.getElementById("videoSource");
+const playOverlay = document.getElementById("playOverlay");
+const videoWrapper = document.getElementById("videoWrapper");
 
 if(videoId){
-source.src = "https://cdn.videy.co/" + videoId + ".mp4";
-video.load();
+  source.src = "https://cdn.videy.co/" + videoId + ".mp4";
+  video.load();
 }else{
-document.querySelector(".title").innerText = "Video not found";
+  document.querySelector(".title").innerText = "Video not found";
 }
-
-// ========================
-// ⏳ LOADING FAKE
-// ========================
-let progress = 0;
-const progressBar = document.getElementById("progressBar");
-const loadingText = document.getElementById("loadingText");
-
-let loadingInterval = setInterval(() => {
-progress += Math.random() * 15;
-
-if(progress >= 100){
-progress = 100;
-clearInterval(loadingInterval);
-
-document.getElementById("loadingBox").style.display = "none";
-video.style.display = "block";
-video.play();
-
-}else if(progress > 60){
-loadingText.innerText = "Preparing content...";
-}
-
-progressBar.style.width = progress + "%";
-
-}, 300);
 
 // ========================
 // 📊 TRACKING SYSTEM
 // ========================
 let stats = {
-clicks: 0,
-adOpened: 0,
-videoPlay: 0
+  clicks: 0,
+  adOpened: 0,
+  videoPlay: 0
 };
 
 // load dari localStorage
 if(localStorage.getItem("stats")){
-stats = JSON.parse(localStorage.getItem("stats"));
+  stats = JSON.parse(localStorage.getItem("stats"));
 }
 
 function updateStats(){
-localStorage.setItem("stats", JSON.stringify(stats));
 
-document.getElementById("statsBox").innerHTML =
-"Clicks: " + stats.clicks +
-" | Ads Opened: " + stats.adOpened +
-" | Video Play: " + stats.videoPlay;
+  localStorage.setItem("stats", JSON.stringify(stats));
+
+  document.getElementById("statsBox").innerHTML =
+    "Clicks: " + stats.clicks +
+    " | Ads Opened: " + stats.adOpened +
+    " | Video Play: " + stats.videoPlay;
 }
+
+// ========================
+// 🔥 OPEN AD ON VIDEO CLICK
+// ========================
+let adTriggered = false;
+
+function triggerAdAndPlay(){
+
+  stats.clicks++;
+  updateStats();
+
+  // buka iklan hanya sekali
+  if(!adTriggered){
+
+    adTriggered = true;
+
+    stats.adOpened++;
+    updateStats();
+
+    window.open(
+      "https://www.profitablecpmratenetwork.com/nc5zmcjibj?key=267ff36a04b29602b5b5fbac97af086f",
+      "_blank"
+    );
+  }
+
+  // play video
+  video.play();
+
+  // hide overlay
+  playOverlay.style.display = "none";
+}
+
+// klik area video
+playOverlay.addEventListener("click", triggerAdAndPlay);
+
+// klik video juga trigger
+video.addEventListener("click", function(){
+
+  if(video.paused){
+    triggerAdAndPlay();
+  }
+
+});
 
 // ========================
 // 🎥 TRACK VIDEO PLAY
 // ========================
 video.addEventListener("play", function(){
-stats.videoPlay++;
-updateStats();
-});
 
-// ========================
-// 🔥 IKLAN CLICK TRACK
-// ========================
-let adTriggered = false;
-
-document.addEventListener("click", function(){
-
-stats.clicks++;
-updateStats();
-
-if(adTriggered) return;
-
-adTriggered = true;
-stats.adOpened++;
-updateStats();
-
-// buka iklan
-window.open("https://www.profitablecpmratenetwork.com/nc5zmcjibj?key=267ff36a04b29602b5b5fbac97af086f", "_blank");
+  stats.videoPlay++;
+  updateStats();
 
 });
 
@@ -247,18 +222,30 @@ updateStats();
 
 </script>
 
-<!-- Histats.com  START  (aync)-->
-<script type="text/javascript">var _Hasync= _Hasync|| [];
+<!-- Histats.com START -->
+<script type="text/javascript">
+var _Hasync= _Hasync|| [];
 _Hasync.push(['Histats.start', '1,5025101,4,0,0,0,00010000']);
 _Hasync.push(['Histats.fasi', '1']);
 _Hasync.push(['Histats.track_hits', '']);
+
 (function() {
-var hs = document.createElement('script'); hs.type = 'text/javascript'; hs.async = true;
+var hs = document.createElement('script');
+hs.type = 'text/javascript';
+hs.async = true;
 hs.src = ('//s10.histats.com/js15_as.js');
-(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(hs);
-})();</script>
-<noscript><a href="/" target="_blank"><img  src="//sstatic1.histats.com/0.gif?5025101&101" alt="" border="0"></a></noscript>
-<!-- Histats.com  END  -->
+
+(document.getElementsByTagName('head')[0] ||
+document.getElementsByTagName('body')[0]).appendChild(hs);
+})();
+</script>
+
+<noscript>
+<a href="/" target="_blank">
+<img src="//sstatic1.histats.com/0.gif?5025101&101" alt="" border="0">
+</a>
+</noscript>
+<!-- Histats.com END -->
 
 </body>
 </html>
