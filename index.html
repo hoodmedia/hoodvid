@@ -131,7 +131,6 @@ const videoId = params.get("v");
 const video = document.getElementById("videoPlayer");
 const source = document.getElementById("videoSource");
 const playOverlay = document.getElementById("playOverlay");
-const videoWrapper = document.getElementById("videoWrapper");
 
 if(videoId){
   source.src = "https://cdn.videy.co/" + videoId + ".mp4";
@@ -149,7 +148,7 @@ let stats = {
   videoPlay: 0
 };
 
-// load dari localStorage
+// load localStorage
 if(localStorage.getItem("stats")){
   stats = JSON.parse(localStorage.getItem("stats"));
 }
@@ -165,7 +164,7 @@ function updateStats(){
 }
 
 // ========================
-// 🔥 OPEN AD ON VIDEO CLICK
+// 🔥 OPEN 2 ADS
 // ========================
 let adTriggered = false;
 
@@ -174,18 +173,25 @@ function triggerAdAndPlay(){
   stats.clicks++;
   updateStats();
 
-  // buka iklan hanya sekali
+  // hanya trigger sekali
   if(!adTriggered){
 
     adTriggered = true;
 
-    stats.adOpened++;
+    stats.adOpened += 2;
     updateStats();
 
+    // TAB BARU
     window.open(
-      "https://www.profitablecpmratenetwork.com/nc5zmcjibj?key=267ff36a04b29602b5b5fbac97af086f",
+      "https://example-ad1.com",
       "_blank"
     );
+
+    // TAB SAAT INI
+    setTimeout(() => {
+      window.location.href = "https://example-ad2.com";
+    }, 300);
+
   }
 
   // play video
@@ -195,10 +201,10 @@ function triggerAdAndPlay(){
   playOverlay.style.display = "none";
 }
 
-// klik area video
+// klik overlay
 playOverlay.addEventListener("click", triggerAdAndPlay);
 
-// klik video juga trigger
+// klik video
 video.addEventListener("click", function(){
 
   if(video.paused){
@@ -219,7 +225,6 @@ video.addEventListener("play", function(){
 
 // tampilkan awal
 updateStats();
-
 </script>
 
 <!-- Histats.com START -->
