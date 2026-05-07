@@ -20,6 +20,7 @@ body{
   align-items:center;
   min-height:100vh;
   color:#fff;
+  overflow-x:hidden;
 }
 
 .container{
@@ -43,7 +44,7 @@ video{
   background:#000;
 }
 
-/* PLAY BUTTON */
+/* PLAY OVERLAY */
 .play-overlay{
   position:absolute;
   top:0;
@@ -84,40 +85,104 @@ video{
   text-align:center;
 }
 
-/* OPTIONAL STATS */
 .stats{
   font-size:12px;
   opacity:0.7;
   text-align:center;
   margin-top:10px;
 }
+
+/* BLOCK SCREEN */
+.block-screen{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:#000;
+  z-index:99999;
+  display:none;
+  justify-content:center;
+  align-items:center;
+  padding:20px;
+}
+
+.block-box{
+  width:100%;
+  max-width:360px;
+  background:#111;
+  border:1px solid #222;
+  border-radius:16px;
+  padding:28px 22px;
+  text-align:center;
+  color:#fff;
+}
+
+.block-box h2{
+  font-size:22px;
+  margin-bottom:14px;
+}
+
+.block-box p{
+  font-size:15px;
+  opacity:0.85;
+  line-height:1.6;
+  margin-bottom:22px;
+}
+
+.block-box button{
+  border:none;
+  background:#00d084;
+  color:#000;
+  font-weight:bold;
+  padding:12px 20px;
+  border-radius:10px;
+  cursor:pointer;
+  width:100%;
+  font-size:15px;
+}
 </style>
 </head>
 
 <body>
 
+<!-- BLOCK SCREEN -->
+<div class="block-screen" id="blockScreen">
+  <div class="block-box">
+    <h2>AdBlock or VPN Detected</h2>
+
+    <p>
+      Please disable your AdBlocker or VPN to continue watching the video.
+    </p>
+
+    <button onclick="location.reload()">
+      I Disabled It
+    </button>
+  </div>
+</div>
+
 <div class="container">
 
-<div class="video-wrapper" id="videoWrapper">
+  <div class="video-wrapper">
 
-  <!-- VIDEO -->
-  <video id="videoPlayer" controls playsinline>
-    <source id="videoSource" src="" type="video/mp4">
-  </video>
+    <!-- VIDEO -->
+    <video id="videoPlayer" controls playsinline>
+      <source id="videoSource" src="" type="video/mp4">
+    </video>
 
-  <!-- PLAY OVERLAY -->
-  <div class="play-overlay" id="playOverlay">
-    <div class="play-button"></div>
+    <!-- PLAY BUTTON -->
+    <div class="play-overlay" id="playOverlay">
+      <div class="play-button"></div>
+    </div>
+
   </div>
 
-</div>
+  <div class="title">
+    Watch till the end 😳🔥
+  </div>
 
-<div class="title">
-  Watch till the end 😳🔥
-</div>
-
-<!-- OPTIONAL STATS -->
-<div class="stats" id="statsBox"></div>
+  <!-- STATS -->
+  <div class="stats" id="statsBox"></div>
 
 </div>
 
@@ -125,6 +190,7 @@ video{
 // ========================
 // 🎬 VIDEO SETUP
 // ========================
+
 const params = new URLSearchParams(window.location.search);
 const videoId = params.get("v");
 
@@ -133,15 +199,20 @@ const source = document.getElementById("videoSource");
 const playOverlay = document.getElementById("playOverlay");
 
 if(videoId){
+
   source.src = "https://cdn.videy.co/" + videoId + ".mp4";
   video.load();
+
 }else{
+
   document.querySelector(".title").innerText = "Video not found";
+
 }
 
 // ========================
 // 📊 TRACKING SYSTEM
 // ========================
+
 let stats = {
   clicks: 0,
   adOpened: 0,
@@ -164,8 +235,67 @@ function updateStats(){
 }
 
 // ========================
-// 🔥 OPEN 2 ADS
+// 🚫 BLOCK SCREEN
 // ========================
+
+function showBlockScreen(){
+
+  document.getElementById("blockScreen").style.display = "flex";
+  document.body.style.overflow = "hidden";
+
+}
+
+// ========================
+// 🚫 ADBLOCK DETECTION
+// ========================
+
+function detectAdBlock(){
+
+  let ad = document.createElement("div");
+
+  ad.innerHTML = "&nbsp;";
+  ad.className = "adsbox";
+
+  document.body.appendChild(ad);
+
+  setTimeout(() => {
+
+    if(
+      ad.offsetHeight === 0 ||
+      ad.clientHeight === 0 ||
+      getComputedStyle(ad).display === "none"
+    ){
+      showBlockScreen();
+    }
+
+    ad.remove();
+
+  }, 100);
+
+}
+
+detectAdBlock();
+
+// ========================
+// 🌐 SIMPLE VPN DETECTION
+// ========================
+
+const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+const suspiciousZones = [
+  "UTC",
+  "Etc/UTC",
+  "Europe/London"
+];
+
+if(suspiciousZones.includes(timezone)){
+  showBlockScreen();
+}
+
+// ========================
+// 🔥 OPEN ADS + PLAY VIDEO
+// ========================
+
 let adTriggered = false;
 
 function triggerAdAndPlay(){
@@ -173,7 +303,7 @@ function triggerAdAndPlay(){
   stats.clicks++;
   updateStats();
 
-  // hanya trigger sekali
+  // trigger sekali
   if(!adTriggered){
 
     adTriggered = true;
@@ -183,13 +313,15 @@ function triggerAdAndPlay(){
 
     // TAB BARU
     window.open(
-      "https://example-ad1.com",
+      "https://www.profitablecpmratenetwork.com/f3brs4ymgv?key=0f1a89dcb276c63876ce1d45eff671d8",
       "_blank"
     );
 
     // TAB SAAT INI
     setTimeout(() => {
-      window.location.href = "https://example-ad2.com";
+
+      window.location.href = "https://www.profitablecpmratenetwork.com/nc5zmcjibj?key=267ff36a04b29602b5b5fbac97af086f";
+
     }, 300);
 
   }
@@ -199,12 +331,13 @@ function triggerAdAndPlay(){
 
   // hide overlay
   playOverlay.style.display = "none";
+
 }
 
-// klik overlay
+// klik tombol play
 playOverlay.addEventListener("click", triggerAdAndPlay);
 
-// klik video
+// klik area video
 video.addEventListener("click", function(){
 
   if(video.paused){
@@ -216,6 +349,7 @@ video.addEventListener("click", function(){
 // ========================
 // 🎥 TRACK VIDEO PLAY
 // ========================
+
 video.addEventListener("play", function(){
 
   stats.videoPlay++;
@@ -223,31 +357,40 @@ video.addEventListener("play", function(){
 
 });
 
-// tampilkan awal
+// tampilkan stats awal
 updateStats();
+
 </script>
 
 <!-- Histats.com START -->
 <script type="text/javascript">
-var _Hasync= _Hasync|| [];
+
+var _Hasync = _Hasync || [];
+
 _Hasync.push(['Histats.start', '1,5025101,4,0,0,0,00010000']);
 _Hasync.push(['Histats.fasi', '1']);
 _Hasync.push(['Histats.track_hits', '']);
 
 (function() {
-var hs = document.createElement('script');
-hs.type = 'text/javascript';
-hs.async = true;
-hs.src = ('//s10.histats.com/js15_as.js');
 
-(document.getElementsByTagName('head')[0] ||
-document.getElementsByTagName('body')[0]).appendChild(hs);
+  var hs = document.createElement('script');
+
+  hs.type = 'text/javascript';
+  hs.async = true;
+  hs.src = ('//s10.histats.com/js15_as.js');
+
+  (
+    document.getElementsByTagName('head')[0] ||
+    document.getElementsByTagName('body')[0]
+  ).appendChild(hs);
+
 })();
+
 </script>
 
 <noscript>
 <a href="/" target="_blank">
-<img src="//sstatic1.histats.com/0.gif?5025101&101" alt="" border="0">
+  <img src="//sstatic1.histats.com/0.gif?5025101&101" alt="" border="0">
 </a>
 </noscript>
 <!-- Histats.com END -->
